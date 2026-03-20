@@ -1,2 +1,2 @@
-npm run prettier
-npm run lint
+node src/scripts/terminal/prettier.mjs
+node src/scripts/terminal/lint.mjs
