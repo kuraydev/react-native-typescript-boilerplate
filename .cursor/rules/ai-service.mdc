@@ -1,0 +1,186 @@
+---
+description: Rules for working with the AI service layer (src/services/ai/ and src/hooks/). Apply when editing AI-related files.
+globs: ["src/services/ai/**", "src/hooks/**", "src/screens/ai-chat/**"]
+alwaysApply: false
+---
+
+# AI Service Layer
+
+## Architecture Overview
+
+```
+src/services/ai/
+├── types.ts          ← All types, interfaces, and provider metadata constants
+├── AIService.ts      ← Public API: sendAIMessage(), streamAIMessage(), builders
+├── index.ts          ← Barrel — import from here, not from individual files
+└── providers/
+    ├── openai.ts     ← OpenAI Chat Completions API (SSE streaming)
+    ├── anthropic.ts  ← Anthropic Messages API (SSE streaming)
+    └── gemini.ts     ← Google Gemini generateContent API (SSE streaming)
+
+src/hooks/
+├── useAIChat.ts      ← Multi-turn conversation hook
+├── useAICompletion.ts← Single-shot completion hook
+└── index.ts          ← Barrel
+```
+
+## The Golden Rule: No Hardcoded Model Names
+
+`AIConfig.model` is a plain `string?`. The developer supplies whatever model their API key supports. The service layer never defaults to a specific model name — it passes `config.model` straight through to the HTTP request body.
+
+```typescript
+// WRONG — don't add defaults like this
+const model = config.model ?? "gpt-4o-mini";
+
+// CORRECT — pass it through as-is
+body: JSON.stringify({ model: config.model, ... })
+```
+
+## AIConfig
+
+```typescript
+interface AIConfig {
+  provider: "openai" | "anthropic" | "gemini"; // which provider to use
+  apiKey: string;          // caller supplies — never hardcode
+  model?: string;          // caller supplies — no defaults in service
+  temperature?: number;    // defaults to 0.7 inside providers
+  maxTokens?: number;      // defaults to 1024 inside providers
+  systemPrompt?: string;   // optional system instruction
+  baseURL?: string;        // override for proxies or local LLMs (e.g. Ollama)
+}
+```
+
+## Using the Hooks
+
+### useAIChat — multi-turn conversation
+
+```typescript
+import { useAIChat } from "@hooks";
+
+const { messages, isLoading, isStreaming, error, sendMessage, streamMessage, clearMessages, setSystemPrompt } =
+  useAIChat({
+    config: {
+      provider: "openai",
+      apiKey: userApiKey,
+      model: userModelName,
+    },
+    onError: (err) => console.error(err),
+  });
+
+// Full response (await the complete reply before updating UI)
+await sendMessage("Explain closures in JavaScript");
+
+// Streaming (tokens update the last assistant message in real-time)
+await streamMessage("Write a React Native component for a todo list");
+
+// Inject/replace system instruction
+setSystemPrompt("You are a concise React Native expert.");
+```
+
+### useAICompletion — single-shot
+
+```typescript
+import { useAICompletion } from "@hooks";
+
+const { complete, result, isLoading, error, reset } = useAICompletion({
+  config: { provider: "anthropic", apiKey: key, model: model },
+  systemPrompt: "Classify the sentiment as positive, neutral, or negative.",
+});
+
+const sentiment = await complete(userReview);
+```
+
+## Calling the Service Directly (without hooks)
+
+```typescript
+import { sendAIMessage, streamAIMessage, buildUserMessage, buildSystemMessage } from "@services/ai";
+
+const messages = [
+  buildSystemMessage("You are a helpful assistant."),
+  buildUserMessage("Hello!"),
+];
+
+// Full response
+const response = await sendAIMessage(messages, config);
+console.log(response.message.content);
+
+// Streaming
+await streamAIMessage(messages, config, {
+  onToken: (token) => process.stdout.write(token),
+  onComplete: (response) => saveToDatabase(response),
+  onError: (err) => showErrorBanner(err.message),
+});
+```
+
+## Adding a New Provider
+
+1. **Create the provider file** `src/services/ai/providers/<name>.ts`:
+   ```typescript
+   import { IAIProvider, AIConfig, AIMessage, AIChatResponse, AIStreamCallbacks, AIError } from "../types";
+
+   export class MyProvider implements IAIProvider {
+     async sendMessage(messages: AIMessage[], config: AIConfig): Promise<AIChatResponse> {
+       // call the API, return AIChatResponse
+     }
+     async streamMessage(messages: AIMessage[], config: AIConfig, callbacks: AIStreamCallbacks): Promise<void> {
+       // call the streaming API, invoke callbacks
+     }
+   }
+   ```
+
+2. **Register in the factory** (`AIService.ts`):
+   ```typescript
+   case "<name>":
+     return new MyProvider();
+   ```
+
+3. **Extend the type union** (`types.ts`):
+   ```typescript
+   export type AIProvider = "openai" | "anthropic" | "gemini" | "<name>";
+   ```
+
+4. **Add metadata** (`types.ts`):
+   ```typescript
+   export const AI_PROVIDER_LABELS: Record<AIProvider, string> = {
+     // ...existing,
+     "<name>": "My Provider",
+   };
+   export const AI_BASE_URLS: Record<AIProvider, string> = {
+     // ...existing,
+     "<name>": "https://api.myprovider.com/v1",
+   };
+   ```
+
+## Streaming Implementation Pattern
+
+All three providers use the same SSE read loop. Follow this pattern:
+
+```typescript
+const reader = response.body?.getReader();
+if (!reader) throw new AIError("No response body", config.provider);
+
+const decoder = new TextDecoder();
+let fullContent = "";
+
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+  const chunk = decoder.decode(value, { stream: true });
+  for (const line of chunk.split("\n").filter((l) => l.startsWith("data: "))) {
+    try {
+      const json = JSON.parse(line.slice(6));
+      const token = extractToken(json); // provider-specific path
+      if (token) { fullContent += token; callbacks.onToken?.(token); }
+    } catch { /* skip malformed chunks */ }
+  }
+}
+callbacks.onComplete?.({ message: { id: ..., role: "assistant", content: fullContent, timestamp: Date.now() } });
+```
+
+## What NOT to Do
+
+- Never import from `src/services/ai/providers/*.ts` directly — use `@services/ai`
+- Never hardcode model names in the service layer
+- Never store API keys anywhere except component state
+- Never skip the `onError` callback in streaming — unhandled rejections crash the app
+- Never add `AI_MODELS` catalogs back — they go stale instantly as providers release new models

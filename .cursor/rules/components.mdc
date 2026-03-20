@@ -1,0 +1,198 @@
+---
+description: Patterns for creating and using shared components. Apply when editing src/shared/components/.
+globs: ["src/shared/components/**", "src/screens/**/*.tsx"]
+alwaysApply: false
+---
+
+# Shared Components
+
+Shared components live in `src/shared/components/`. They are prefixed with `RN` and exported from the barrel `index.ts`.
+
+## Existing Shared Components
+
+| Component | Import | Description |
+|---|---|---|
+| `TextWrapper` | `@shared-components/text-wrapper/TextWrapper` | All text rendering |
+| `RNButton` | `@shared-components` | Filled / outline / ghost button |
+| `RNInput` | `@shared-components` | Text input with label, error, icons |
+| `RNBadge` | `@shared-components` | Status badges |
+| `RNDivider` | `@shared-components` | Horizontal/vertical separator |
+| `RNLoadingIndicator` | `@shared-components` | Full-screen or inline spinner |
+| `RNEmptyState` | `@shared-components` | Empty list / error state |
+| `RNAIMessage` | `@shared-components` | AI chat message bubble |
+
+Always import from the barrel when possible:
+```typescript
+import { RNButton, RNInput, RNLoadingIndicator } from "@shared-components";
+```
+
+## Creating a New Shared Component
+
+### Directory structure
+```
+src/shared/components/
+└── my-widget/
+    ├── RNMyWidget.tsx
+    └── RNMyWidget.style.ts
+```
+
+### Component file template (`RNMyWidget.tsx`)
+
+```typescript
+import React, { useMemo } from "react";
+import { View } from "react-native";
+import { useTheme } from "@react-navigation/native";
+import type { StyleProp, ViewStyle } from "react-native";
+import createStyles from "./RNMyWidget.style";
+
+// Props interface — always I-prefixed
+export interface IRNMyWidgetProps {
+  label: string;
+  onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
+}
+
+const RNMyWidget: React.FC<IRNMyWidgetProps> = ({ label, onPress, style }) => {
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
+  return (
+    <View style={[styles.container, style]}>
+      {/* content */}
+    </View>
+  );
+};
+
+export default RNMyWidget;
+```
+
+### Style file template (`RNMyWidget.style.ts`)
+
+```typescript
+import { StyleSheet } from "react-native";
+import type { ExtendedTheme } from "@react-navigation/native";
+
+const createStyles = (theme: ExtendedTheme) => {
+  const { colors } = theme;
+
+  return StyleSheet.create({
+    container: {
+      backgroundColor: colors.card,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+    },
+  });
+};
+
+export default createStyles;
+```
+
+### Register in barrel (`src/shared/components/index.ts`)
+
+```typescript
+export { default as RNMyWidget } from "./my-widget/RNMyWidget";
+export type { IRNMyWidgetProps } from "./my-widget/RNMyWidget";
+```
+
+## TextWrapper Usage
+
+`TextWrapper` wraps `@freakycoder/react-native-custom-text`. Default font family is `Montserrat-Regular`.
+
+```typescript
+import Text from "@shared-components/text-wrapper/TextWrapper";
+import fonts from "@fonts";
+
+// Size shorthands
+<Text h1>Heading 1</Text>   // 32px
+<Text h2>Heading 2</Text>   // 28px
+<Text h3>Heading 3</Text>   // 24px
+<Text h4>Heading 4</Text>   // 20px
+<Text h5>Heading 5</Text>   // 18px
+<Text h6>Heading 6</Text>   // 16px
+
+// Font weight / style
+<Text bold color={colors.text}>Bold text</Text>
+<Text italic color={colors.placeholder}>Italic text</Text>
+
+// Custom font family
+<Text fontFamily={fonts.montserrat.semiBold} color={colors.text}>Semi-bold</Text>
+<Text fontFamily={fonts.montserrat.lightItalic} color={colors.placeholder}>Light italic</Text>
+```
+
+Available font weights: `black`, `blackItalic`, `bold`, `boldItalic`, `extraBold`, `extraBoldItalic`, `extraLight`, `extraLightItalic`, `italic`, `light`, `lightItalic`, `medium`, `mediumItalic`, `regular`, `semiBold`, `semiBoldItalic`, `thin`, `thinItalic`.
+
+## RNButton Usage
+
+```typescript
+import { RNButton } from "@shared-components";
+
+<RNButton label="Confirm" onPress={handleConfirm} />
+<RNButton label="Cancel" variant="outline" size="sm" color={colors.danger} />
+<RNButton label="Loading…" loading />
+<RNButton label="Full Width" fullWidth variant="ghost" />
+```
+
+Props: `label`, `onPress`, `variant: "filled"|"outline"|"ghost"`, `size: "sm"|"md"|"lg"`, `loading`, `disabled`, `color`, `fullWidth`, `style`, `textStyle`.
+
+## RNInput Usage
+
+```typescript
+import { RNInput } from "@shared-components";
+import Icon, { IconType } from "react-native-dynamic-vector-icons";
+
+<RNInput
+  label="Email"
+  placeholder="you@example.com"
+  value={email}
+  onChangeText={setEmail}
+  error={emailError}
+  leftIcon={<Icon name="mail" type={IconType.Ionicons} size={18} color={colors.placeholder} />}
+/>
+```
+
+## RNLoadingIndicator Usage
+
+```typescript
+import { RNLoadingIndicator } from "@shared-components";
+
+// Inline spinner
+<RNLoadingIndicator size="small" />
+
+// Full-screen overlay
+<RNLoadingIndicator fullScreen overlay />
+```
+
+## RNEmptyState Usage
+
+```typescript
+import { RNEmptyState } from "@shared-components";
+
+<RNEmptyState
+  icon="search-outline"
+  iconType={IconType.Ionicons}
+  title="No results"
+  subtitle="Try a different search term"
+  actionLabel="Clear search"
+  onAction={() => setQuery("")}
+/>
+```
+
+## RNAIMessage Usage
+
+Renders a role-aware chat bubble:
+
+```typescript
+import { RNAIMessage } from "@shared-components";
+
+<RNAIMessage
+  message={message}           // AIMessage from @services/ai/types
+  isStreaming={isLastToken}   // shows animated cursor dot
+  showTimestamp               // optional HH:MM below bubble
+/>
+```
+
+Appearance by role:
+- `user` — right-aligned, primary color background
+- `assistant` — left-aligned, card background with sparkle avatar
+- `system` — centered, small italic, muted color

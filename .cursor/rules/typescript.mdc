@@ -1,0 +1,161 @@
+---
+description: TypeScript conventions for this project. Apply to all .ts and .tsx files.
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
+# TypeScript Conventions
+
+This project uses TypeScript 5 with `strict: true` and several additional strict flags. Understand them before editing.
+
+## Active Strict Flags
+
+```jsonc
+{
+  "strict": true,
+  "noUnusedLocals": true,       // every declared local must be used
+  "noUnusedParameters": true,   // every function parameter must be used
+  "noImplicitReturns": true,    // every code path must return
+  "noFallthroughCasesInSwitch": true,
+  "strictNullChecks": true,
+  "noImplicitAny": true
+}
+```
+
+## Interface Naming
+
+Props interfaces use the `I` prefix:
+
+```typescript
+// CORRECT
+export interface IRNButtonProps { ... }
+export interface IAIChatScreenConfig { ... }
+
+// WRONG
+export interface ButtonProps { ... }
+export interface AIChatScreenConfig { ... }
+```
+
+Non-props shared data interfaces also use `I`:
+```typescript
+export interface ICardItem { name: string; description: string; ... }
+export interface IFeatureCard { icon: string; iconType: string; ... }
+```
+
+## Type-Only Imports and Exports
+
+Use `import type` / `export type` for type-only references. This keeps runtime bundles clean:
+
+```typescript
+// Imports
+import type { AIConfig, AIMessage } from "@services/ai/types";
+import type { StyleProp, ViewStyle } from "react-native";
+
+// Re-exports from barrel files
+export type { IRNButtonProps, ButtonVariant, ButtonSize } from "./button/RNButton";
+export type { AIProvider, AIRole, AIMessage } from "./types";
+```
+
+## Exhaustive Switch Statements
+
+When switching on a union type, use the `never` trick to get a compile error if a case is missing:
+
+```typescript
+function createProvider(provider: AIProvider): IAIProvider {
+  switch (provider) {
+    case "openai":    return new OpenAIProvider();
+    case "anthropic": return new AnthropicProvider();
+    case "gemini":    return new GeminiProvider();
+    default: {
+      const exhaustive: never = provider;
+      throw new Error(`Unknown AI provider: ${String(exhaustive)}`);
+    }
+  }
+}
+```
+
+## Handling External API JSON (`any` rule)
+
+The project's ESLint config disallows `any`. The only accepted pattern is on untyped external API responses — and it must be suppressed per-line with a comment explaining why:
+
+```typescript
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const data = await response.json() as any;
+const content = data.candidates?.[0]?.content?.parts?.[0]?.text as string;
+```
+
+Never use `any` for internal project types.
+
+## Unused Variables
+
+`noUnusedLocals` and `noUnusedParameters` are enforced. If a parameter is required by an interface but not used, prefix it with `_`:
+
+```typescript
+// Parameter required by interface but not used locally
+function renderItem({ item, _index }: { item: MyItem; _index: number }) { ... }
+```
+
+## Optional Chaining and Nullish Coalescing
+
+Prefer these over manual null checks:
+
+```typescript
+// CORRECT
+const content = data.candidates?.[0]?.content ?? "";
+const key = config.apiKey ?? "";
+
+// WRONG
+const content = data.candidates && data.candidates[0] && data.candidates[0].content ? data.candidates[0].content : "";
+```
+
+## Enums vs const objects
+
+Prefer `const` objects with `as const` over TypeScript enums (enums generate runtime code; const objects don't):
+
+```typescript
+// CORRECT — used in this project
+export const SCREENS = {
+  HOME: "Home",
+  DETAIL: "Detail",
+} as const; // or without, for string literals
+
+// AVOID
+enum Screens { Home = "Home", Detail = "Detail" }
+```
+
+## React Component Types
+
+Always type components as `React.FC`:
+
+```typescript
+const MyComponent: React.FC<IMyComponentProps> = ({ prop1, prop2 }) => {
+  return <View />;
+};
+
+export default MyComponent;
+```
+
+## Generic Utility Types
+
+Use built-in utility types where appropriate:
+
+```typescript
+Partial<Record<AIProvider, string>>   // optional per-provider map
+Record<AIProvider, string>            // required per-provider map
+Pick<AIConfig, "provider" | "model">  // subset of an interface
+Omit<TextInputProps, "style">         // extend native props minus one key
+```
+
+## Module Augmentation (global.d.ts)
+
+The navigation theme is extended in `global.d.ts` so `useTheme()` returns the full palette:
+
+```typescript
+// global.d.ts
+declare module "@react-navigation/native" {
+  export type ExtendedTheme = typeof theme;
+  export function useTheme(): ExtendedTheme;
+}
+```
+
+This makes `colors.primary`, `colors.danger`, `colors.borderColor`, etc. type-safe. Never bypass this by using `as any` on the theme.

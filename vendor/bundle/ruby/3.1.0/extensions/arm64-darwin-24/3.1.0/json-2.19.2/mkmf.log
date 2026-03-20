@@ -1,0 +1,225 @@
+have_func: checking for rb_enc_interned_str() in ruby/encoding.h... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -o conftest -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe conftest.c  -L. -L/Users/kuray/.rbenv/versions/3.1.6/lib -L. -fstack-protector-strong -L/opt/homebrew/opt/gmp/lib -L/usr/local/lib     -lruby.3.1   "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -o conftest -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe conftest.c  -L. -L/Users/kuray/.rbenv/versions/3.1.6/lib -L. -fstack-protector-strong -L/opt/homebrew/opt/gmp/lib -L/usr/local/lib     -lruby.3.1   "
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby/encoding.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_enc_interned_str; return !p; }
+/* end */
+
+--------------------
+
+have_func: checking for rb_str_to_interned_str() in ruby.h... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -o conftest -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe conftest.c  -L. -L/Users/kuray/.rbenv/versions/3.1.6/lib -L. -fstack-protector-strong -L/opt/homebrew/opt/gmp/lib -L/usr/local/lib     -lruby.3.1   "
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_str_to_interned_str; return !p; }
+/* end */
+
+--------------------
+
+have_func: checking for rb_hash_new_capa() in ruby.h... -------------------- no
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -o conftest -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe conftest.c  -L. -L/Users/kuray/.rbenv/versions/3.1.6/lib -L. -fstack-protector-strong -L/opt/homebrew/opt/gmp/lib -L/usr/local/lib     -lruby.3.1   "
+conftest.c:16:57: error: use of undeclared identifier 'rb_hash_new_capa'
+   16 | int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_hash_new_capa; return !p; }
+      |                                                         ^
+1 error generated.
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_hash_new_capa; return !p; }
+/* end */
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -o conftest -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe conftest.c  -L. -L/Users/kuray/.rbenv/versions/3.1.6/lib -L. -fstack-protector-strong -L/opt/homebrew/opt/gmp/lib -L/usr/local/lib     -lruby.3.1   "
+Undefined symbols for architecture arm64:
+  "_rb_hash_new_capa", referenced from:
+      _t in conftest-589611.o
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: extern void rb_hash_new_capa();
+17: int t(void) { rb_hash_new_capa(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for rb_hash_bulk_insert() in ruby.h... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -o conftest -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe conftest.c  -L. -L/Users/kuray/.rbenv/versions/3.1.6/lib -L. -fstack-protector-strong -L/opt/homebrew/opt/gmp/lib -L/usr/local/lib     -lruby.3.1   "
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <ruby.h>
+ 4: 
+ 5: /*top*/
+ 6: extern int t(void);
+ 7: int main(int argc, char **argv)
+ 8: {
+ 9:   if (argc > 1000000) {
+10:     int (* volatile tp)(void)=(int (*)(void))&t;
+11:     printf("%d", (*tp)());
+12:   }
+13: 
+14:   return !!argv[argc];
+15: }
+16: int t(void) { void ((*volatile p)()); p = (void ((*)()))rb_hash_bulk_insert; return !p; }
+/* end */
+
+--------------------
+
+block in append_cflags: checking for whether -std=c99 is accepted as CFLAGS... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe  -std=c99 -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+--------------------
+
+have_header: checking for arm_neon.h... -------------------- yes
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe -std=c99   -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <arm_neon.h>
+/* end */
+
+--------------------
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe -std=c99  -Werror=implicit-function-declaration -c conftest.c"
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: #include <arm_neon.h>
+ 4: 
+ 5: int main(int argc, char **argv) {
+ 6:   uint8x16_t test = vdupq_n_u8(32);
+ 7: 
+ 8:   if (argc > 100000) printf("%p", &test);
+ 9:   return 0;
+10: }
+/* end */
+
+have_header: checking for cpuid.h... -------------------- no
+
+DYLD_FALLBACK_LIBRARY_PATH=.:/Users/kuray/.rbenv/versions/3.1.6/lib "clang -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/arm64-darwin24 -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0/ruby/backward -I/Users/kuray/.rbenv/versions/3.1.6/include/ruby-3.1.0 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -fdeclspec -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wold-style-definition -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens -Wundef  -fno-common -pipe -std=c99   -c conftest.c"
+In file included from conftest.c:3:
+/Applications/Xcode-26.1.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/cpuid.h:14:2: error: this header is for x86 only
+   14 | #error this header is for x86 only
+      |  ^
+/Applications/Xcode-26.1.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/cpuid.h:309:5: error: invalid output constraint '=a' in asm
+  309 |     __cpuid(__leaf, __eax, __ebx, __ecx, __edx);
+      |     ^
+/Applications/Xcode-26.1.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/cpuid.h:273:11: note: expanded from macro '__cpuid'
+  273 |         : "=a"(__eax), "=r" (__ebx), "=c"(__ecx), "=d"(__edx) \
+      |           ^
+/Applications/Xcode-26.1.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/cpuid.h:324:5: error: invalid output constraint '=a' in asm
+  324 |     __cpuid(__leaf, *__eax, *__ebx, *__ecx, *__edx);
+      |     ^
+/Applications/Xcode-26.1.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/cpuid.h:273:11: note: expanded from macro '__cpuid'
+  273 |         : "=a"(__eax), "=r" (__ebx), "=c"(__ecx), "=d"(__edx) \
+      |           ^
+/Applications/Xcode-26.1.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/cpuid.h:338:5: error: invalid output constraint '=a' in asm
+  338 |     __cpuid_count(__leaf, __subleaf, *__eax, *__ebx, *__ecx, *__edx);
+      |     ^
+/Applications/Xcode-26.1.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/cpuid.h:280:11: note: expanded from macro '__cpuid_count'
+  280 |         : "=a"(__eax), "=r" (__ebx), "=c"(__ecx), "=d"(__edx) \
+      |           ^
+/Applications/Xcode-26.1.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/cpuid.h:346:3: error: invalid output constraint '=a' in asm
+  346 |   __cpuid_count(__leaf, __subleaf, __cpu_info[0], __cpu_info[1], __cpu_info[2],
+      |   ^
+/Applications/Xcode-26.1.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/cpuid.h:280:11: note: expanded from macro '__cpuid_count'
+  280 |         : "=a"(__eax), "=r" (__ebx), "=c"(__ecx), "=d"(__edx) \
+      |           ^
+5 errors generated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <cpuid.h>
+/* end */
+
+--------------------
+

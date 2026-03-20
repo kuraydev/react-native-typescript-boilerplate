@@ -1,0 +1,132 @@
+---
+description: General project conventions for the React Native TypeScript boilerplate. Apply to all files.
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
+# Project Conventions
+
+## File & Directory Naming
+
+- React component files: `PascalCase.tsx` (e.g. `HomeScreen.tsx`, `RNButton.tsx`)
+- Style files: co-located with the component as `PascalCase.style.ts`
+- Non-component TypeScript files: `camelCase.ts` (e.g. `useAIChat.ts`, `index.ts`)
+- Directories: `kebab-case` (e.g. `ai-chat/`, `empty-state/`, `card-item/`)
+- Shared component directories: named after the component in kebab-case under `src/shared/components/`
+
+## Path Aliases — Always Use Over Relative Paths
+
+Never write `../../..` imports when an alias covers it. All aliases:
+
+```
+@shared-components  →  src/shared/components
+@shared-constants   →  src/shared/constants
+@services/*         →  src/services/*
+@screens/*          →  src/screens/*
+@hooks              →  src/hooks/index
+@models             →  src/services/models
+@theme/*            →  src/shared/theme/*
+@fonts              →  src/shared/theme/fonts
+@font-size          →  src/shared/theme/font-size
+@colors             →  src/shared/theme/colors
+@utils              →  src/utils
+@assets             →  src/assets
+@event-emitter      →  src/services/event-emitter
+```
+
+After adding a new alias to `babel.config.js` + `tsconfig.json`, run:
+```bash
+npm run start:fresh
+```
+
+## Import Order (enforced by Prettier)
+
+1. External packages (`react`, `react-native`, third-party libs)
+2. Path alias imports (`@services/...`, `@shared-components/...`)
+3. Relative imports (only when no alias covers it)
+
+## Colors — Never Hardcode
+
+```typescript
+// WRONG
+backgroundColor: "#4A6CF7"
+
+// CORRECT
+const { colors } = useTheme();
+backgroundColor: colors.primary
+```
+
+All palette keys: `primary`, `secondary`, `background`, `card`, `text`, `placeholder`, `borderColor`, `danger`, `white`, `black`, `shadow`, `separator`, `highlight`, `calpyse`, `transparent`, and dark-mode variants.
+
+## Styles Pattern
+
+Every component that needs styles must follow this exact pattern:
+
+```typescript
+import { useMemo } from "react";
+import { useTheme } from "@react-navigation/native";
+import createStyles from "./MyComponent.style";
+
+const MyComponent = () => {
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+  // ...
+};
+```
+
+And the style file:
+
+```typescript
+import { StyleSheet } from "react-native";
+import type { ExtendedTheme } from "@react-navigation/native";
+
+const createStyles = (theme: ExtendedTheme) => {
+  const { colors } = theme;
+  return StyleSheet.create({
+    // all styles using colors.*
+  });
+};
+
+export default createStyles;
+```
+
+## Safe Area
+
+Always import `SafeAreaView` from `react-native-safe-area-context`, never from `react-native`:
+
+```typescript
+// CORRECT
+import { SafeAreaView } from "react-native-safe-area-context";
+
+// WRONG
+import { SafeAreaView } from "react-native";
+```
+
+## Touchable Elements
+
+Always use `RNBounceable` instead of `TouchableOpacity` or `Pressable`:
+
+```typescript
+import RNBounceable from "@freakycoder/react-native-bounceable";
+
+<RNBounceable onPress={handlePress}>
+  {/* content */}
+</RNBounceable>
+```
+
+## Text Elements
+
+Never use bare `<Text>` from react-native. Always use `TextWrapper`:
+
+```typescript
+import Text from "@shared-components/text-wrapper/TextWrapper";
+
+<Text h4 bold color={colors.text}>Title</Text>
+<Text fontFamily={fonts.montserrat.light} color={colors.placeholder}>Subtitle</Text>
+```
+
+Props: `h1`–`h6` (size), `bold`, `italic`, `fontFamily`, `color`, `style`.
+
+## TypeScript Strict Mode
+
+The project uses `strict: true` with `noUnusedLocals` and `noUnusedParameters`. Every declared variable and parameter must be used, or TypeScript will error.

@@ -1,0 +1,123 @@
+---
+description: Navigation patterns for react-navigation v7. Apply when editing navigation or adding screens.
+globs: ["src/navigation/**", "src/screens/**", "src/shared/constants/**"]
+alwaysApply: false
+---
+
+# Navigation
+
+This project uses **react-navigation v7** with two navigators:
+
+- **Stack Navigator** (root) — wraps the tab navigator and hosts stack-only screens (e.g. `Detail`)
+- **Bottom Tab Navigator** — hosts the main tabs: Home, Search, Notification, Settings, AIChat
+
+## Screen Name Registry
+
+All screen name strings live in a single constant. **Never** use raw string literals for screen names.
+
+File: `src/shared/constants/index.ts`
+
+```typescript
+export const SCREENS = {
+  ROOT: "Root",
+  HOME: "Home",
+  SEARCH: "Search",
+  NOTIFICATION: "Notification",
+  SETTINGS: "Settings",
+  DETAIL: "Detail",
+  AI_CHAT: "AIChat",
+  // add new screens here
+};
+```
+
+## Adding a New Tab Screen
+
+1. Add the key to `SCREENS` in `src/shared/constants/index.ts`
+2. Create the screen in `src/screens/<name>/<Name>Screen.tsx` + `<Name>Screen.style.ts`
+3. In `src/navigation/index.tsx`:
+   - Import the screen component
+   - Add a `case SCREENS.<NAME>:` in `renderTabIcon` returning the correct icon name
+   - Add `<Tab.Screen name={SCREENS.<NAME>} component={<Name>Screen} />`
+
+```typescript
+// renderTabIcon switch
+case SCREENS.MY_SCREEN:
+  iconName = focused ? "icon-filled" : "icon-outline";
+  break;
+
+// Tab.Navigator
+<Tab.Screen name={SCREENS.MY_SCREEN} component={MyScreen} />
+```
+
+## Adding a New Stack Screen
+
+Stack-only screens (pushed on top of the tab navigator, e.g. detail/modal views):
+
+```typescript
+// src/navigation/index.tsx
+<Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Screen name={SCREENS.ROOT} component={renderTabNavigation} />
+  <Stack.Screen name={SCREENS.DETAIL}>
+    {(props) => <DetailScreen {...props} />}
+  </Stack.Screen>
+  <Stack.Screen name={SCREENS.MY_MODAL} component={MyModalScreen} />
+</Stack.Navigator>
+```
+
+## Imperative Navigation (from outside components)
+
+Use `react-navigation-helpers` — the `navigationRef` is already wired up in the `NavigationContainer`:
+
+```typescript
+import { navigate, push, goBack } from "react-navigation-helpers";
+
+// Navigate to a screen
+navigate(SCREENS.DETAIL);
+
+// Push with params
+push(SCREENS.DETAIL, { id: "123" });
+
+// Go back
+goBack();
+```
+
+The `isReadyRef` is set to `true` in `NavigationContainer.onReady` — safe to call these after that.
+
+## Theme-Aware Navigation Container
+
+The navigator automatically switches between `LightTheme` and `DarkTheme` based on the system color scheme:
+
+```typescript
+const scheme = useColorScheme();
+const isDarkMode = scheme === "dark";
+
+<NavigationContainer theme={isDarkMode ? DarkTheme : LightTheme}>
+```
+
+Both themes are exported from `@theme/themes`. The tab bar background also switches automatically via:
+```typescript
+tabBarStyle: { backgroundColor: isDarkMode ? palette.black : palette.white }
+```
+
+## Screen Component Template
+
+```typescript
+import React, { useMemo } from "react";
+import { View } from "react-native";
+import { useTheme } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import createStyles from "./MyScreen.style";
+
+const MyScreen: React.FC = () => {
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* screen content */}
+    </SafeAreaView>
+  );
+};
+
+export default MyScreen;
+```

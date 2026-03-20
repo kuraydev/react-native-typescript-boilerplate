@@ -1,45 +1,36 @@
+import React from "react";
+import { LogBox, StatusBar, useColorScheme } from "react-native";
+import "react-native-gesture-handler";
+import SplashScreen from "react-native-splash-screen";
+import { isAndroid } from "@freakycoder/react-native-helpers";
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
+ * ? Local Imports
  */
+import Navigation from "./src/navigation";
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+LogBox.ignoreAllLogs();
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+const App = () => {
+  const scheme = useColorScheme();
+  const isDarkMode = scheme === "dark";
 
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
+  React.useEffect(() => {
+    StatusBar.setBarStyle(isDarkMode ? "light-content" : "dark-content");
+    if (isAndroid) {
+      StatusBar.setBackgroundColor("rgba(0,0,0,0)");
+      StatusBar.setTranslucent(true);
+    }
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 750);
+  }, [scheme, isDarkMode]);
 
   return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
+    <>
+      <Navigation />
+    </>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+};
 
 export default App;

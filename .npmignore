@@ -1,0 +1,9 @@
+# Node Modules
+**/node_modules
+node_modules
+# Generated Files
+ios
+android
+# Assets
+Assets
+assets

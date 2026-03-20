@@ -1,0 +1,34 @@
+current directory: /Users/kuray/Coursion/OpenSource/ReactNativeTypescriptBoilerplate/vendor/bundle/ruby/3.1.0/gems/bigdecimal-4.0.1/ext/bigdecimal
+/Users/kuray/.rbenv/versions/3.1.6/bin/ruby -I /Users/kuray/.rbenv/versions/3.1.6/lib/ruby/3.1.0 extconf.rb
+checking for __builtin_clz()... yes
+checking for __builtin_clzl()... yes
+checking for __builtin_clzll()... yes
+checking for float.h... yes
+checking for math.h... yes
+checking for stdbool.h... yes
+checking for stdlib.h... yes
+checking for x86intrin.h... no
+checking for intrin.h... no
+checking for ruby/atomic.h... yes
+checking for ruby/internal/has/builtin.h... yes
+checking for ruby/internal/static_assert.h... yes
+checking for rb_complex_real() in ruby.h... yes
+checking for rb_complex_imag() in ruby.h... yes
+checking for rb_opts_exception_p() in ruby.h... yes
+checking for rb_category_warn() in ruby.h... yes
+checking for RB_WARN_CATEGORY_DEPRECATED in ruby.h... yes
+creating Makefile
+
+current directory: /Users/kuray/Coursion/OpenSource/ReactNativeTypescriptBoilerplate/vendor/bundle/ruby/3.1.0/gems/bigdecimal-4.0.1/ext/bigdecimal
+make DESTDIR\= sitearchdir\=./.gem.20260320-58428-v0mevc sitelibdir\=./.gem.20260320-58428-v0mevc clean
+
+current directory: /Users/kuray/Coursion/OpenSource/ReactNativeTypescriptBoilerplate/vendor/bundle/ruby/3.1.0/gems/bigdecimal-4.0.1/ext/bigdecimal
+make DESTDIR\= sitearchdir\=./.gem.20260320-58428-v0mevc sitelibdir\=./.gem.20260320-58428-v0mevc
+compiling bigdecimal.c
+compiling missing.c
+linking shared-object bigdecimal.bundle
+ld: warning: ignoring duplicate libraries: '-lruby.3.1'
+
+current directory: /Users/kuray/Coursion/OpenSource/ReactNativeTypescriptBoilerplate/vendor/bundle/ruby/3.1.0/gems/bigdecimal-4.0.1/ext/bigdecimal
+make DESTDIR\= sitearchdir\=./.gem.20260320-58428-v0mevc sitelibdir\=./.gem.20260320-58428-v0mevc install
+/opt/homebrew/bin/ginstall -c -m 0755 bigdecimal.bundle ./.gem.20260320-58428-v0mevc
