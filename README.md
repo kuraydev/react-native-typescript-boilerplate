@@ -15,7 +15,7 @@
 
 ## Table of Contents
 
-- [Screenshots](#-screenshots)
+- [Showcase](#-showcase)
 - [What's New in v6](#-whats-new-in-v6)
 - [What's Included](#-whats-included)
 - [Getting Started](#-getting-started)
@@ -33,7 +33,7 @@
 
 ---
 
-## 📸 Screenshots
+## 📸 Showcase
 
 <p align="center">
   <img src="assets/screenshots/ss1.png" width="22%" alt="Home Screen" />
