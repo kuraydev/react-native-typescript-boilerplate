@@ -1,10 +1,10 @@
-[![React Native Typescript Boilerplate](https://img.shields.io/badge/-React%20Native%20TypeScript%20Boilerplate-4A6CF7?style=for-the-badge)](https://github.com/WrathChaos/react-native-typescript-boilerplate)
+[![React Native Typescript Boilerplate](https://img.shields.io/badge/-React%20Native%20TypeScript%20Boilerplate-4A6CF7?style=for-the-badge)](https://github.com/kuraydev/react-native-typescript-boilerplate)
 [![npm version](https://img.shields.io/npm/v/react-native-typescript-boilerplate.svg?style=for-the-badge)](https://www.npmjs.com/package/@freakycoder/react-native-typescript-boilerplate)
 [![npm](https://img.shields.io/npm/dt/react-native-typescript-boilerplate.svg?style=for-the-badge)](https://www.npmjs.com/package/@freakycoder/react-native-typescript-boilerplate)
 ![Platform - Android and iOS](https://img.shields.io/badge/platform-Android%20%7C%20iOS-blue.svg?style=for-the-badge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg?style=for-the-badge)](https://github.com/prettier/prettier)
-[![AI Ready](https://img.shields.io/badge/AI--Ready-OpenAI%20%7C%20Anthropic%20%7C%20Gemini-8b5cf6?style=for-the-badge)](https://github.com/WrathChaos/react-native-typescript-boilerplate)
+[![AI Ready](https://img.shields.io/badge/AI--Ready-OpenAI%20%7C%20Anthropic%20%7C%20Gemini-8b5cf6?style=for-the-badge)](https://github.com/kuraydev/react-native-typescript-boilerplate)
 
 > **AI-Ready.** Production-grade React Native + TypeScript boilerplate with a built-in, provider-agnostic AI service layer. Wire up OpenAI, Anthropic Claude, Google Gemini — or any LLM — in minutes, not days.
 
@@ -124,7 +124,7 @@
 ### 1. Clone
 
 ```sh
-git clone https://github.com/WrathChaos/react-native-typescript-boilerplate.git my-app
+git clone https://github.com/kuraydev/react-native-typescript-boilerplate.git my-app
 cd my-app
 ```
 
