@@ -24,6 +24,7 @@
 
 ## Table of Contents
 
+- [Screenshots](#-screenshots)
 - [What's New in v6](#-whats-new-in-v6)
 - [What's Included](#-whats-included)
 - [Getting Started](#-getting-started)
@@ -38,6 +39,20 @@
 - [Utilities](#-utilities)
 - [AI Guidance Files](#-ai-guidance-files)
 - [Code Quality](#-code-quality)
+
+---
+
+## 📸 Screenshots
+
+<p align="center">
+  <img src="assets/screenshots/ss1.png" width="22%" alt="Home Screen" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshots/ss2.png" width="22%" alt="Search Screen" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshots/ss3.png" width="22%" alt="Notifications Screen" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshots/ss4.png" width="22%" alt="Settings Screen" />
+</p>
 
 ---
 
@@ -158,6 +173,23 @@ npm run android
 | `npm run prettier` | Prettier — auto-format all files in `src/` |
 | `npm test` | Jest |
 | `npm run prepare` | Initialize Husky hooks (runs automatically after `npm install`) |
+| `npm run clean:showcase` | Remove showcase/demo content and replace screens with minimal stubs |
+
+---
+
+### Start fresh — remove showcase content
+
+The included screens (Home, Search, Notifications, Settings) are demo UIs that showcase the architecture. Once you've explored the boilerplate, run:
+
+```sh
+npm run clean:showcase
+```
+
+This will:
+- Delete `src/screens/home/mock/` (FeatureCards, UtilityItems, StackItems)
+- Delete `src/screens/home/components/` (CardItem)
+- Replace each showcase screen with a minimal, compilable stub
+- Leave AIChatScreen, all shared components, services, theme, and navigation wiring untouched
 
 ---
 

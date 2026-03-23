@@ -10,7 +10,8 @@
     "start": "react-native start",
     "start:fresh": "react-native start --reset-cache",
     "test": "jest",
-    "prepare": "husky"
+    "prepare": "husky",
+    "clean:showcase": "bash scripts/clean-showcase.sh"
   },
   "dependencies": {
     "@freakycoder/react-native-bounceable": "^2.1.0",
