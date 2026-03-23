@@ -30,7 +30,6 @@
 - [What's Included](#-whats-included)
 - [Getting Started](#-getting-started)
 - [Path Aliases](#-path-aliases)
-- [Project Structure](#-project-structure)
 - [AI Service Layer](#-ai-service-layer)
 - [Theme System](#-theme-system)
 - [Navigation](#-navigation)
@@ -40,6 +39,7 @@
 - [Utilities](#-utilities)
 - [AI Guidance Files](#-ai-guidance-files)
 - [Code Quality](#-code-quality)
+- [Project Structure](#-project-structure)
 
 ---
 
@@ -241,72 +241,6 @@ import { useAIChat } from "@hooks";
 ```
 
 > After adding a new alias to both `babel.config.js` and `tsconfig.json`, run `npm run start:fresh` to reset Metro's cache.
-
----
-
-## 🗂 Project Structure
-
-```
-src/
-├── assets/
-│   ├── fonts/
-│   │   └── Montserrat/              # 18 font weights
-│   └── splash/
-├── hooks/                           # Custom React hooks
-│   ├── useAIChat.ts                 # Multi-turn AI conversation hook
-│   ├── useAICompletion.ts           # Single-shot AI completion hook
-│   └── index.ts
-├── navigation/
-│   └── index.tsx                    # Stack + Bottom Tab navigator
-├── screens/
-│   ├── ai-chat/                     # AI Chat demo screen
-│   │   ├── AIChatScreen.tsx
-│   │   └── AIChatScreen.style.ts
-│   ├── home/
-│   │   ├── components/card-item/
-│   │   ├── mock/MockData.ts
-│   │   ├── HomeScreen.tsx
-│   │   └── HomeScreen.style.ts
-│   ├── detail/
-│   ├── notification/
-│   ├── search/
-│   └── settings/
-├── services/
-│   ├── ai/                          # Provider-agnostic AI service layer
-│   │   ├── providers/
-│   │   │   ├── openai.ts            # OpenAI Chat Completions
-│   │   │   ├── anthropic.ts         # Anthropic Messages
-│   │   │   └── gemini.ts            # Google Gemini
-│   │   ├── AIService.ts             # sendAIMessage, streamAIMessage
-│   │   ├── types.ts                 # AIMessage, AIConfig, AIChatResponse…
-│   │   └── index.ts
-│   ├── event-emitter/
-│   │   └── index.ts                 # EventEmitter singleton
-│   └── models/
-│       └── index.ts                 # Shared TypeScript interfaces
-├── shared/
-│   ├── components/
-│   │   ├── ai-message/              # RNAIMessage — chat bubble component
-│   │   ├── badge/RNBadge.tsx
-│   │   ├── button/RNButton.tsx
-│   │   ├── divider/RNDivider.tsx
-│   │   ├── empty-state/RNEmptyState.tsx
-│   │   ├── input/RNInput.tsx
-│   │   ├── loading-indicator/RNLoadingIndicator.tsx
-│   │   ├── text-wrapper/TextWrapper.tsx
-│   │   └── index.ts                 # Barrel export
-│   ├── constants/
-│   │   └── index.ts                 # SCREENS enum
-│   ├── localization/
-│   │   └── index.ts                 # i18next (en + tr-TR)
-│   └── theme/
-│       ├── colors.ts
-│       ├── font-size.ts
-│       ├── fonts.ts                 # Montserrat font map
-│       └── themes.ts                # LightTheme / DarkTheme + palette
-└── utils/
-    └── index.ts
-```
 
 ---
 
@@ -696,6 +630,72 @@ Config file: `.commitlintrc.json`
 - [Axios Hooks](./docs/axios-hooks.md)
 - [Event Emitter](./docs/event-emitter.md)
 - [Project Structure](./docs/project-structure.md)
+
+---
+
+## 🗂 Project Structure
+
+```
+src/
+├── assets/
+│   ├── fonts/
+│   │   └── Montserrat/              # 18 font weights
+│   └── splash/
+├── hooks/                           # Custom React hooks
+│   ├── useAIChat.ts                 # Multi-turn AI conversation hook
+│   ├── useAICompletion.ts           # Single-shot AI completion hook
+│   └── index.ts
+├── navigation/
+│   └── index.tsx                    # Stack + Bottom Tab navigator
+├── screens/
+│   ├── ai-chat/                     # AI Chat demo screen
+│   │   ├── AIChatScreen.tsx
+│   │   └── AIChatScreen.style.ts
+│   ├── home/
+│   │   ├── components/card-item/
+│   │   ├── mock/MockData.ts
+│   │   ├── HomeScreen.tsx
+│   │   └── HomeScreen.style.ts
+│   ├── detail/
+│   ├── notification/
+│   ├── search/
+│   └── settings/
+├── services/
+│   ├── ai/                          # Provider-agnostic AI service layer
+│   │   ├── providers/
+│   │   │   ├── openai.ts            # OpenAI Chat Completions
+│   │   │   ├── anthropic.ts         # Anthropic Messages
+│   │   │   └── gemini.ts            # Google Gemini
+│   │   ├── AIService.ts             # sendAIMessage, streamAIMessage
+│   │   ├── types.ts                 # AIMessage, AIConfig, AIChatResponse…
+│   │   └── index.ts
+│   ├── event-emitter/
+│   │   └── index.ts                 # EventEmitter singleton
+│   └── models/
+│       └── index.ts                 # Shared TypeScript interfaces
+├── shared/
+│   ├── components/
+│   │   ├── ai-message/              # RNAIMessage — chat bubble component
+│   │   ├── badge/RNBadge.tsx
+│   │   ├── button/RNButton.tsx
+│   │   ├── divider/RNDivider.tsx
+│   │   ├── empty-state/RNEmptyState.tsx
+│   │   ├── input/RNInput.tsx
+│   │   ├── loading-indicator/RNLoadingIndicator.tsx
+│   │   ├── text-wrapper/TextWrapper.tsx
+│   │   └── index.ts                 # Barrel export
+│   ├── constants/
+│   │   └── index.ts                 # SCREENS enum
+│   ├── localization/
+│   │   └── index.ts                 # i18next (en + tr-TR)
+│   └── theme/
+│       ├── colors.ts
+│       ├── font-size.ts
+│       ├── fonts.ts                 # Montserrat font map
+│       └── themes.ts                # LightTheme / DarkTheme + palette
+└── utils/
+    └── index.ts
+```
 
 ---
 
