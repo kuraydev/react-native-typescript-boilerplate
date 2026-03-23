@@ -8,6 +8,16 @@
 
 > **AI-Ready.** Production-grade React Native + TypeScript boilerplate with a built-in, provider-agnostic AI service layer. Wire up OpenAI, Anthropic Claude, Google Gemini — or any LLM — in minutes, not days.
 
+> [!TIP]
+> **Works great with AI coding assistants.** This repo ships with purpose-built guidance files so Cursor, Claude Code, GitHub Copilot, Windsurf, and Gemini CLI all understand the project conventions out of the box:
+>
+> | File | Used by |
+> |---|---|
+> | [`CLAUDE.md`](./CLAUDE.md) | Claude Code |
+> | [`AGENTS.md`](./AGENTS.md) | Windsurf · Codex CLI · Gemini CLI |
+> | [`.cursor/rules/`](./.cursor/rules/) | Cursor |
+> | [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) | GitHub Copilot |
+
 > [!NOTE]
 > All screens, components, and mock data included in this boilerplate are **for demonstration purposes only**. They exist to showcase the architecture, theming, navigation, and AI service layer — not to be kept as-is. Feel free to delete any screen, component, or piece of mock data and replace it with your own.
 
@@ -606,16 +616,30 @@ generateRandomNumber(1, 100);     // e.g. 42
 
 This boilerplate ships with a complete set of guidance files so every AI coding assistant understands the project conventions out of the box — and can help developers extend it correctly.
 
+### Top-level files
+
 | File | Read by | Content |
 |---|---|---|
-| `CLAUDE.md` | Claude Code | Full project reference: architecture, aliases, AI service docs, conventions, what to avoid |
-| `AGENTS.md` | Windsurf, Codex CLI, Gemini CLI | Concise snapshot: layout, rules, extension guide |
-| `.cursor/rules/project-conventions.mdc` | Cursor | File naming, aliases, color rules, styles pattern, safe area, touchables |
-| `.cursor/rules/ai-service.mdc` | Cursor | AI service architecture, hook usage, adding providers, streaming pattern |
-| `.cursor/rules/navigation.mdc` | Cursor | `SCREENS` constant, adding tabs/stack screens, imperative navigation |
-| `.cursor/rules/components.mdc` | Cursor | Creating shared components, TextWrapper/RNButton/RNInput usage, barrel exports |
-| `.cursor/rules/typescript.mdc` | Cursor | Strict flags, I-prefix interfaces, `export type`, exhaustive switch, `any` policy |
-| `.github/copilot-instructions.md` | GitHub Copilot | Workspace-level inline suggestion rules |
+| [`CLAUDE.md`](./CLAUDE.md) | Claude Code | Full project reference: architecture, aliases, AI service docs, conventions, what to avoid |
+| [`AGENTS.md`](./AGENTS.md) | Windsurf · Codex CLI · Gemini CLI | Concise snapshot: layout, rules, extension guide |
+
+### `.cursor/rules/`
+
+Cursor reads these automatically when you're working inside the repo.
+
+| Rule file | Content |
+|---|---|
+| [`project-conventions.mdc`](./.cursor/rules/project-conventions.mdc) | File naming, aliases, color rules, styles pattern, safe area, touchables |
+| [`ai-service.mdc`](./.cursor/rules/ai-service.mdc) | AI service architecture, hook usage, adding providers, streaming pattern |
+| [`navigation.mdc`](./.cursor/rules/navigation.mdc) | `SCREENS` constant, adding tabs/stack screens, imperative navigation |
+| [`components.mdc`](./.cursor/rules/components.mdc) | Creating shared components, TextWrapper/RNButton/RNInput usage, barrel exports |
+| [`typescript.mdc`](./.cursor/rules/typescript.mdc) | Strict flags, I-prefix interfaces, `export type`, exhaustive switch, `any` policy |
+
+### `.github/`
+
+| File | Read by | Content |
+|---|---|---|
+| [`copilot-instructions.md`](./.github/copilot-instructions.md) | GitHub Copilot | Workspace-level inline suggestion rules |
 
 These files are designed to be **extended**. As your project grows, update them to reflect new conventions, new services, or new architectural decisions — every AI tool in your team's workflow will stay aligned automatically.
 
