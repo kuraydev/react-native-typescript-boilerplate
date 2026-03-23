@@ -652,8 +652,8 @@ src/
 │   │   ├── AIChatScreen.tsx
 │   │   └── AIChatScreen.style.ts
 │   ├── home/
-│   │   ├── components/card-item/
-│   │   ├── mock/MockData.ts
+│   │   ├── components/card-item/    # removed by clean:showcase
+│   │   ├── mock/MockData.ts         # removed by clean:showcase
 │   │   ├── HomeScreen.tsx
 │   │   └── HomeScreen.style.ts
 │   ├── detail/
