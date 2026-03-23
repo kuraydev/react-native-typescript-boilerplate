@@ -1,8 +1,9 @@
 import React, { useMemo } from "react";
-import { ScrollView, View } from "react-native";
+import { Image, ScrollView, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import Icon, { IconType } from "react-native-dynamic-vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import logo from "@assets/logo.png";
 import fonts from "@fonts";
 import RNBounceable from "@freakycoder/react-native-bounceable";
 import Text from "@shared-components/text-wrapper/TextWrapper";
@@ -207,9 +208,7 @@ const SettingsScreen: React.FC = () => {
         {/* App info card */}
         <View style={styles.appCard}>
           <View style={styles.appIconWrap}>
-            <Text fontFamily={fonts.montserrat.bold} style={styles.appIconText}>
-              RN
-            </Text>
+            <Image source={logo} style={styles.logoImage} resizeMode="cover" />
           </View>
           <View style={styles.appCardContent}>
             <Text

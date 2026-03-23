@@ -1,4 +1,6 @@
-<img alt="React Native Typescript Boilerplate" src="assets/logo.png" width="1050"/>
+<p align="center">
+  <img alt="React Native Typescript Boilerplate" src="src/assets/logo.png" width="160" style="border-radius: 28px"/>
+</p>
 
 [![React Native Typescript Boilerplate](https://img.shields.io/badge/-React%20Native%20TypeScript%20Boilerplate-4A6CF7?style=for-the-badge)](https://github.com/WrathChaos/react-native-typescript-boilerplate)
 [![npm version](https://img.shields.io/npm/v/react-native-typescript-boilerplate.svg?style=for-the-badge)](https://www.npmjs.com/package/@freakycoder/react-native-typescript-boilerplate)
@@ -14,6 +16,9 @@
 </p>
 
 > **AI-Ready.** Production-grade React Native + TypeScript boilerplate with a built-in, provider-agnostic AI service layer. Wire up OpenAI, Anthropic Claude, Google Gemini — or any LLM — in minutes, not days.
+
+> [!NOTE]
+> All screens, components, and mock data included in this boilerplate are **for demonstration purposes only**. They exist to showcase the architecture, theming, navigation, and AI service layer — not to be kept as-is. Feel free to delete any screen, component, or piece of mock data and replace it with your own.
 
 ---
 

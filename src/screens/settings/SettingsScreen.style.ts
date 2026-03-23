@@ -1,4 +1,9 @@
-import { StyleSheet, type TextStyle, type ViewStyle } from "react-native";
+import {
+  StyleSheet,
+  type ImageStyle,
+  type TextStyle,
+  type ViewStyle,
+} from "react-native";
 import type { ExtendedTheme } from "@react-navigation/native";
 
 interface Style {
@@ -11,7 +16,7 @@ interface Style {
   // App info card
   appCard: ViewStyle;
   appIconWrap: ViewStyle;
-  appIconText: TextStyle;
+  logoImage: ImageStyle;
   appCardContent: ViewStyle;
   appName: TextStyle;
   appVersion: TextStyle;
@@ -85,16 +90,12 @@ export default (theme: ExtendedTheme) => {
       width: 52,
       height: 52,
       borderRadius: 14,
-      backgroundColor: colors.primary,
-      alignItems: "center",
-      justifyContent: "center",
       marginRight: 14,
+      overflow: "hidden",
     },
-    appIconText: {
-      fontSize: 22,
-      color: "#fff",
-      fontWeight: "700",
-      letterSpacing: 0.5,
+    logoImage: {
+      width: 52,
+      height: 52,
     },
     appCardContent: {
       flex: 1,

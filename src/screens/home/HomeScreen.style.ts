@@ -51,7 +51,7 @@ export default (theme: ExtendedTheme) => {
       backgroundColor: colors.background,
     },
     scrollContent: {
-      paddingBottom: 48,
+      paddingBottom: 0,
     },
 
     /* ---- Header ---- */

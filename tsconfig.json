@@ -40,6 +40,7 @@
       "@screens/*": ["./screens/*"],
       "@utils": ["./utils/"],
       "@assets": ["./assets/"],
+      "@assets/*": ["./assets/*"],
       "@local-storage": ["./services/local-storage"],
       "@hooks": ["./hooks/index"],
       "@hooks/*": ["./hooks/*"],
