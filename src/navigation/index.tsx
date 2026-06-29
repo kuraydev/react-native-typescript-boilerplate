@@ -26,12 +26,14 @@ const Navigation = () => {
   const scheme = useColorScheme();
   const isDarkMode = scheme === "dark";
 
-  React.useEffect((): any => {
-    return () => (isReadyRef.current = false);
+  React.useEffect(() => {
+    return () => {
+      isReadyRef.current = false;
+    };
   }, []);
 
   const renderTabIcon = (
-    route: any,
+    route: { name: string },
     focused: boolean,
     color: string,
     size: number,
@@ -106,7 +108,7 @@ const Navigation = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name={SCREENS.ROOT} component={renderTabNavigation} />
         <Stack.Screen name={SCREENS.DETAIL}>
-          {(props) => <DetailScreen {...props} />}
+          {() => <DetailScreen />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

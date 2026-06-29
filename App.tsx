@@ -8,7 +8,10 @@ import { isAndroid } from "@freakycoder/react-native-helpers";
  */
 import Navigation from "./src/navigation";
 
-LogBox.ignoreAllLogs();
+// Scope log suppression to known-benign third-party warnings only. Avoid
+// LogBox.ignoreAllLogs() — it hides real bugs during development. Add specific
+// message prefixes here as you encounter noisy, non-actionable warnings.
+LogBox.ignoreLogs([]);
 
 const App = () => {
   const scheme = useColorScheme();
