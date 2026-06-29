@@ -1,3 +1,5 @@
+import { SSEError } from "./sse";
+
 // ─── Core Types ───────────────────────────────────────────────────────────────
 
 export type AIProvider = "openai" | "anthropic" | "gemini";
@@ -84,4 +86,44 @@ export class AIError extends Error {
     super(message);
     this.name = "AIError";
   }
+}
+
+/** Pull a human-readable message out of a provider's JSON error body. */
+export function extractApiErrorMessage(
+  responseText?: string,
+): string | undefined {
+  if (!responseText) return undefined;
+  try {
+    const parsed = JSON.parse(responseText) as {
+      error?: { message?: string } | string;
+    };
+    if (typeof parsed.error === "string") return parsed.error;
+    return parsed.error?.message;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Normalise any thrown value (including {@link SSEError}) into an {@link AIError}
+ * so stream callbacks always receive a typed error carrying `provider` and,
+ * where available, the HTTP `statusCode`.
+ */
+export function toAIError(
+  error: unknown,
+  provider: AIProvider,
+  fallbackMessage: string,
+): AIError {
+  if (error instanceof AIError) return error;
+  if (error instanceof SSEError) {
+    const message =
+      extractApiErrorMessage(error.responseText) ??
+      error.message ??
+      fallbackMessage;
+    return new AIError(message, provider, error.status);
+  }
+  if (error instanceof Error) {
+    return new AIError(error.message || fallbackMessage, provider);
+  }
+  return new AIError(fallbackMessage, provider);
 }

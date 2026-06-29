@@ -43,7 +43,7 @@ export function sendAIMessage(
   config: AIConfig,
 ): Promise<AIChatResponse> {
   const provider = createProvider(config.provider);
-  return provider.sendMessage(messages, config);
+  return provider.sendMessage(withSystemPrompt(messages, config), config);
 }
 
 /**
@@ -62,7 +62,25 @@ export function streamAIMessage(
   callbacks: AIStreamCallbacks,
 ): Promise<void> {
   const provider = createProvider(config.provider);
-  return provider.streamMessage(messages, config, callbacks);
+  return provider.streamMessage(
+    withSystemPrompt(messages, config),
+    config,
+    callbacks,
+  );
+}
+
+/**
+ * Honor {@link AIConfig.systemPrompt} by prepending a system message when the
+ * caller supplied a prompt and the conversation doesn't already contain one.
+ * Centralised here so every provider receives a consistent message list.
+ */
+function withSystemPrompt(
+  messages: AIMessage[],
+  config: AIConfig,
+): AIMessage[] {
+  if (!config.systemPrompt) return messages;
+  if (messages.some((m) => m.role === "system")) return messages;
+  return [buildSystemMessage(config.systemPrompt), ...messages];
 }
 
 /**
