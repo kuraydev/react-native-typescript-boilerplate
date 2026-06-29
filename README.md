@@ -1,10 +1,11 @@
 [![React Native Typescript Boilerplate](https://img.shields.io/badge/-React%20Native%20TypeScript%20Boilerplate-4A6CF7?style=for-the-badge)](https://github.com/kuraydev/react-native-typescript-boilerplate)
-[![npm version](https://img.shields.io/npm/v/react-native-typescript-boilerplate.svg?style=for-the-badge)](https://www.npmjs.com/package/@freakycoder/react-native-typescript-boilerplate)
-[![npm](https://img.shields.io/npm/dt/react-native-typescript-boilerplate.svg?style=for-the-badge)](https://www.npmjs.com/package/@freakycoder/react-native-typescript-boilerplate)
+[![CI](https://img.shields.io/github/actions/workflow/status/kuraydev/react-native-typescript-boilerplate/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/kuraydev/react-native-typescript-boilerplate/actions/workflows/ci.yml)
 ![Platform - Android and iOS](https://img.shields.io/badge/platform-Android%20%7C%20iOS-blue.svg?style=for-the-badge)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](./LICENSE)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg?style=for-the-badge)](https://github.com/prettier/prettier)
 [![AI Ready](https://img.shields.io/badge/AI--Ready-OpenAI%20%7C%20Anthropic%20%7C%20Gemini-8b5cf6?style=for-the-badge)](https://github.com/kuraydev/react-native-typescript-boilerplate)
+
+> **This is a clone-and-go app template, not an npm package** — clone it, rename it, and build your app. (The unrelated `react-native-typescript-boilerplate` npm package is a separate, older project.)
 
 > **AI-Ready.** Production-grade React Native + TypeScript boilerplate with a built-in, provider-agnostic AI service layer. Wire up OpenAI, Anthropic Claude, Google Gemini — or any LLM — in minutes, not days.
 
@@ -28,9 +29,11 @@
 - [Showcase](#-showcase)
 - [What's New in v6](#-whats-new-in-v6)
 - [What's Included](#-whats-included)
+- [Requirements](#-requirements)
 - [Getting Started](#-getting-started)
 - [Path Aliases](#-path-aliases)
 - [AI Service Layer](#-ai-service-layer)
+- [Streaming &amp; Security Notes](#-streaming--security-notes)
 - [Theme System](#-theme-system)
 - [Navigation](#-navigation)
 - [Event Emitter](#-event-emitter)
@@ -39,6 +42,8 @@
 - [Utilities](#-utilities)
 - [AI Guidance Files](#-ai-guidance-files)
 - [Code Quality](#-code-quality)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
 - [Project Structure](#-project-structure)
 
 ---
@@ -116,6 +121,33 @@
 - **Montserrat** font family (18 weights) bundled
 - **ESLint + Prettier** with auto import sorting
 - **Husky** pre-commit: lint, format, and commitlint run automatically
+
+---
+
+## 📋 Requirements
+
+| Tool | Version | Notes |
+|---|---|---|
+| **Node** | `>= 22.11.0` | enforced via `engines` in `package.json` |
+| **React Native** | `0.84.x` | pinned; ships with the **New Architecture** enabled |
+| **React** | `19.x` | |
+| **Xcode** | `16+` | for iOS builds (CocoaPods `1.16+`) |
+| **Android SDK** | API 35 / Build-Tools 35 | for Android builds |
+| **Ruby + Bundler** | as per `Gemfile` | for CocoaPods on iOS |
+
+> [!IMPORTANT]
+> **The New Architecture is enabled by default** (`newArchEnabled=true` on
+> Android, `RCTNewArchEnabled` on iOS — Bridgeless / JSI / Fabric). This is a
+> consumer app template (no custom TurboModules/Fabric components), and every
+> native dependency here (`react-native-reanimated` v4 + `react-native-worklets`,
+> `react-native-screens` v4, `react-native-gesture-handler`,
+> `react-native-safe-area-context`, `@react-native-masked-view/masked-view`,
+> `react-native-vector-icons`) is New-Arch compatible at the pinned versions.
+> Treat the native pin set as a unit; bumping one can require bumping others.
+
+> **Expo:** this is a bare React Native project (it has native `ios/` and
+> `android/` folders), so it is **not** an Expo-managed app. You can adopt it
+> under Expo's bare/prebuild workflow, but that is not the default path here.
 
 ---
 
@@ -227,8 +259,12 @@ All aliases are defined in `babel.config.js` and `tsconfig.json`. Always prefer 
 | `@utils` | `src/utils` |
 | `@assets` | `src/assets` |
 | `@event-emitter` | `src/services/event-emitter` |
-| `@api` | `src/services/api/index` *(stub)* |
-| `@local-storage` | `src/services/local-storage` *(stub)* |
+| `@api` | `src/services/api/index` *(empty placeholder — drop your API client here)* |
+| `@local-storage` | `src/services/local-storage` *(empty placeholder — wire up your storage here)* |
+
+> Every alias above resolves in **both** `babel.config.js` (runtime) and
+> `tsconfig.json` (types). `@api` and `@local-storage` are intentional empty
+> stubs so the imports type-check out of the box — fill them in as you build.
 
 **Example:**
 
@@ -375,6 +411,43 @@ export const AI_PROVIDER_LABELS: Record<AIProvider, string> = {
   "<name>": "My Provider",
 };
 ```
+
+---
+
+## 🔌 Streaming &amp; Security Notes
+
+### How streaming works in React Native
+
+React Native's `fetch` does **not** expose a streaming `ReadableStream` body
+(`response.body` is `undefined` on a device/simulator), so the common
+`response.body.getReader()` pattern silently fails. This boilerplate streams via
+an `XMLHttpRequest`-based Server-Sent Events transport
+([`src/services/ai/sse.ts`](./src/services/ai/sse.ts)) that React Native fully
+supports, with a cross-chunk line buffer so tokens split across network packets
+are never dropped. You don't need to do anything — `streamMessage` /
+`streamAIMessage` just work on-device.
+
+> If you build your own provider, reuse `streamSSE` from `@services/ai` instead
+> of `fetch().body` so streaming keeps working on a real device.
+
+### 🔐 Don't ship API keys in production
+
+The demo passes a user-entered `apiKey` directly into a client-side request.
+That's fine for a local demo, but **never bundle a provider key in a shipped
+app** — anyone can extract it from the binary. For production, route requests
+through your own backend and point the client at it via `baseURL`:
+
+```typescript
+const config: AIConfig = {
+  provider: "openai",
+  apiKey: "",                          // your proxy injects the real key
+  model: "gpt-4o-mini",
+  baseURL: "https://your-api.example.com/ai", // OpenAI-compatible proxy
+};
+```
+
+The same `baseURL` override also works for local LLMs (e.g. Ollama / LM Studio
+exposing an OpenAI-compatible endpoint).
 
 ---
 
@@ -581,27 +654,33 @@ These files are designed to be **extended**. As your project grows, update them 
 
 ## ✅ Code Quality
 
-### ESLint + Prettier
+### Scripts
 
 ```sh
-# Lint check
-npm run lint
-
-# Auto-format all files in src/
-npm run prettier
+npm run typecheck      # tsc --noEmit — the type gate
+npm run lint           # eslint .
+npm run lint:fix       # eslint . --fix
+npm run prettier       # prettier --write src/**
+npm run format:check   # prettier --check src/** (used by CI)
+npm test               # jest
 ```
 
-Config files: `.eslintrc.js`, `.prettierrc`, `.eslintignore`, `.prettierignore`
+These are exactly the gates [CI](./.github/workflows/ci.yml) runs on every push
+and PR (Node 22 & 24).
 
-### Husky v9 — pre-commit hooks
+Config files: `.eslintrc.js`, `.prettierrc`, `.eslintignore`, `.prettierignore`,
+`tsconfig.json`, `jest.config.js`.
 
-Husky runs automatically on every commit. No manual setup needed — `npm install` triggers `prepare` which initializes the hooks.
+### Husky v9 — git hooks
 
-**On every `git commit`:**
-1. `npm run prettier` — auto-formats all staged source files
+Husky runs automatically on every commit. No manual setup needed — `npm install`
+triggers `prepare` which initializes the hooks.
+
+**On every `git commit` (`pre-commit`):**
+1. `npm run typecheck` — `tsc --noEmit` must pass
 2. `npm run lint` — ESLint must pass with no errors
 
-**On the commit message:**
+**On the commit message (`commit-msg`):**
 3. `commitlint` — validates the message follows Conventional Commits
 
 ### Commit conventions (`commitlint`)
@@ -621,6 +700,29 @@ test: add useAIChat unit tests
 Allowed types: `feat` · `fix` · `chore` · `docs` · `style` · `refactor` · `perf` · `test` · `ci` · `revert`
 
 Config file: `.commitlintrc.json`
+
+---
+
+## 🧯 Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| `Unable to resolve module @…/…` after adding an alias | Add it to **both** `babel.config.js` and `tsconfig.json`, then `npm run start:fresh` to reset Metro's cache. |
+| AI streaming returns nothing / errors immediately | Make sure you're on this version — streaming uses an XHR SSE transport (see [Streaming Notes](#-streaming--security-notes)). `fetch().body.getReader()` does not stream in React Native. |
+| `401` / `403` from a provider | Check the API key and that the `model` string is valid for that key. Errors surface as `AIError` with a `statusCode`. |
+| iOS build can't find pods | `cd ios && pod install && cd ..` (CocoaPods `1.16+`). |
+| Type errors only in CI | Run `npm run typecheck` locally — it's the same `tsc --noEmit` gate. |
+| New Architecture build issues | Don't bump a single native dep in isolation; the pinned `reanimated` / `worklets` / `screens` / `gesture-handler` set is validated together. |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read [`CONTRIBUTING.md`](./CONTRIBUTING.md) for
+setup, the local gates (`typecheck` · `lint` · `format:check` · `test`), and the
+Conventional Commits convention. All changes go through the
+[CI workflow](./.github/workflows/ci.yml). See the
+[`CHANGELOG.md`](./CHANGELOG.md) for a history of notable changes.
 
 ---
 
