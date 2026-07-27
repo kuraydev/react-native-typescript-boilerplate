@@ -4,6 +4,9 @@ node_modules
 # Generated Files
 ios
 android
+# Ruby / Bundler (CocoaPods toolchain) - never publish
+vendor
+vendor/bundle
 # Assets
 Assets
 assets
