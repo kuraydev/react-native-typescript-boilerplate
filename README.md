@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **This boilerplate is no longer maintained.** Active development moved to the Expo-based successor:
+> **[kuraydev/react-native-expo-boilerplate](https://github.com/kuraydev/react-native-expo-boilerplate)** — latest Expo SDK, expo-router, TanStack Query + zustand, design tokens, EAS setup scripts, and AI-assistant guidance files.
+> Use that for new projects. This repo remains available read-only for existing users.
+
 [![React Native Typescript Boilerplate](https://img.shields.io/badge/-React%20Native%20TypeScript%20Boilerplate-4A6CF7?style=for-the-badge)](https://github.com/kuraydev/react-native-typescript-boilerplate)
 [![npm version](https://img.shields.io/npm/v/react-native-typescript-boilerplate.svg?style=for-the-badge)](https://www.npmjs.com/package/@freakycoder/react-native-typescript-boilerplate)
 [![npm](https://img.shields.io/npm/dt/react-native-typescript-boilerplate.svg?style=for-the-badge)](https://www.npmjs.com/package/@freakycoder/react-native-typescript-boilerplate)
