@@ -8,7 +8,7 @@
     "noEmit": true,
     "isolatedModules": false,
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     // ? Custom ones
@@ -29,18 +29,26 @@
     // ? Babel Plugin Module Resolver
     "baseUrl": "./src",
     "paths": {
+      "@shared-components": ["./shared/components"],
       "@shared-components/*": ["./shared/components/*"],
       "@shared-constants": ["./shared/constants"],
       "@font-size": ["./shared/theme/font-size"],
       "@api": ["./services/api/index"],
       "@fonts": ["./shared/theme/fonts"],
       "@colors": ["./shared/theme/colors"],
+      "@theme": ["./shared/theme"],
       "@theme/*": ["./shared/theme/*"],
+      "@models": ["./services/models"],
+      "@services": ["./services"],
       "@services/*": ["./services/*"],
+      "@screens": ["./screens"],
       "@screens/*": ["./screens/*"],
       "@utils": ["./utils/"],
       "@assets": ["./assets/"],
-      "@assets/*": ["./assets/*"],
+      // Note: `@assets/<file>.png` imports are typed by the ambient `*.png`
+      // module declarations in global.d.ts, not by a path glob (a glob here
+      // would shadow those declarations and break asset type resolution).
+      "@event-emitter": ["./services/event-emitter"],
       "@local-storage": ["./services/local-storage"],
       "@hooks": ["./hooks/index"],
       "@hooks/*": ["./hooks/*"],

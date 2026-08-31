@@ -1,5 +1,7 @@
+import { streamSSE } from "../sse";
 import {
   AIError,
+  toAIError,
   type AIChatResponse,
   type AIConfig,
   type AIMessage,
@@ -7,10 +9,25 @@ import {
   type IAIProvider,
 } from "../types";
 
+// ─── Wire types ─────────────────────────────────────────────────────────────
+
 interface AnthropicErrorBody {
   error?: { message?: string };
 }
 
+interface AnthropicResponseBody {
+  id?: string;
+  content?: Array<{ text?: string }>;
+  stop_reason?: string;
+  usage?: { input_tokens: number; output_tokens: number };
+}
+
+interface AnthropicStreamEvent {
+  type?: string;
+  delta?: { type?: string; text?: string };
+}
+
+const DEFAULT_BASE_URL = "https://api.anthropic.com/v1";
 const ANTHROPIC_VERSION = "2023-06-01";
 
 export class AnthropicProvider implements IAIProvider {
@@ -18,27 +35,12 @@ export class AnthropicProvider implements IAIProvider {
     messages: AIMessage[],
     config: AIConfig,
   ): Promise<AIChatResponse> {
-    const baseURL = config.baseURL ?? "https://api.anthropic.com/v1";
-
-    // Anthropic keeps system prompt separate from the messages array
-    const systemMessage = messages.find((m) => m.role === "system");
-    const conversation = messages
-      .filter((m) => m.role !== "system")
-      .map(({ role, content }) => ({ role, content }));
+    const baseURL = config.baseURL ?? DEFAULT_BASE_URL;
 
     const response = await fetch(`${baseURL}/messages`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": config.apiKey,
-        "anthropic-version": ANTHROPIC_VERSION,
-      },
-      body: JSON.stringify({
-        model: config.model,
-        max_tokens: config.maxTokens ?? 1024,
-        ...(systemMessage ? { system: systemMessage.content } : {}),
-        messages: conversation,
-      }),
+      headers: this.headers(config),
+      body: JSON.stringify(this.buildBody(messages, config, false)),
     });
 
     if (!response.ok) {
@@ -52,27 +54,24 @@ export class AnthropicProvider implements IAIProvider {
       );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data = (await response.json()) as any;
-    const content = (data.content?.[0]?.text ?? "") as string;
+    const data = (await response.json()) as AnthropicResponseBody;
+    const content = data.content?.[0]?.text ?? "";
 
     return {
       message: {
-        id: (data.id ?? `anthropic-${Date.now()}`) as string,
+        id: data.id ?? `anthropic-${Date.now()}`,
         role: "assistant",
         content,
         timestamp: Date.now(),
       },
       usage: data.usage
         ? {
-            promptTokens: data.usage.input_tokens as number,
-            completionTokens: data.usage.output_tokens as number,
-            totalTokens:
-              (data.usage.input_tokens as number) +
-              (data.usage.output_tokens as number),
+            promptTokens: data.usage.input_tokens,
+            completionTokens: data.usage.output_tokens,
+            totalTokens: data.usage.input_tokens + data.usage.output_tokens,
           }
         : undefined,
-      finishReason: data.stop_reason as string | undefined,
+      finishReason: data.stop_reason,
     };
   }
 
@@ -81,60 +80,22 @@ export class AnthropicProvider implements IAIProvider {
     config: AIConfig,
     callbacks: AIStreamCallbacks,
   ): Promise<void> {
-    const baseURL = config.baseURL ?? "https://api.anthropic.com/v1";
-
-    const systemMessage = messages.find((m) => m.role === "system");
-    const conversation = messages
-      .filter((m) => m.role !== "system")
-      .map(({ role, content }) => ({ role, content }));
+    const baseURL = config.baseURL ?? DEFAULT_BASE_URL;
+    let fullContent = "";
 
     try {
-      const response = await fetch(`${baseURL}/messages`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": config.apiKey,
-          "anthropic-version": ANTHROPIC_VERSION,
-        },
-        body: JSON.stringify({
-          model: config.model,
-          max_tokens: config.maxTokens ?? 1024,
-          ...(systemMessage ? { system: systemMessage.content } : {}),
-          messages: conversation,
-          stream: true,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new AIError(
-          `Anthropic stream request failed (${response.status})`,
-          "anthropic",
-          response.status,
-        );
-      }
-
-      const reader = response.body?.getReader();
-      if (!reader) throw new AIError("No response body", "anthropic");
-
-      const decoder = new TextDecoder();
-      let fullContent = "";
-
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n").filter((l) => l.startsWith("data: "));
-
-        for (const line of lines) {
+      await streamSSE({
+        url: `${baseURL}/messages`,
+        headers: this.headers(config),
+        body: JSON.stringify(this.buildBody(messages, config, true)),
+        onData: (data) => {
           try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const json = JSON.parse(line.slice(6)) as any;
+            const json = JSON.parse(data) as AnthropicStreamEvent;
             if (
               json.type === "content_block_delta" &&
               json.delta?.type === "text_delta"
             ) {
-              const token = (json.delta.text ?? "") as string;
+              const token = json.delta.text ?? "";
               if (token) {
                 fullContent += token;
                 callbacks.onToken?.(token);
@@ -143,8 +104,8 @@ export class AnthropicProvider implements IAIProvider {
           } catch {
             // skip malformed SSE chunks
           }
-        }
-      }
+        },
+      });
 
       callbacks.onComplete?.({
         message: {
@@ -155,8 +116,33 @@ export class AnthropicProvider implements IAIProvider {
         },
       });
     } catch (error) {
-      const e = error instanceof Error ? error : new Error(String(error));
-      callbacks.onError?.(e);
+      callbacks.onError?.(
+        toAIError(error, "anthropic", "Anthropic stream failed"),
+      );
     }
+  }
+
+  private headers(config: AIConfig): Record<string, string> {
+    return {
+      "Content-Type": "application/json",
+      "x-api-key": config.apiKey,
+      "anthropic-version": ANTHROPIC_VERSION,
+    };
+  }
+
+  private buildBody(messages: AIMessage[], config: AIConfig, stream: boolean) {
+    // Anthropic keeps the system prompt separate from the messages array.
+    const systemMessage = messages.find((m) => m.role === "system");
+    const conversation = messages
+      .filter((m) => m.role !== "system")
+      .map(({ role, content }) => ({ role, content }));
+
+    return {
+      model: config.model,
+      max_tokens: config.maxTokens ?? 1024,
+      ...(systemMessage ? { system: systemMessage.content } : {}),
+      messages: conversation,
+      ...(stream ? { stream: true } : {}),
+    };
   }
 }

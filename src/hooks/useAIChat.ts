@@ -71,11 +71,8 @@ export function useAIChat({
       setError(null);
 
       try {
-        const mergedConfig: AIConfig = config.systemPrompt
-          ? { ...config }
-          : config;
-
-        const response = await sendAIMessage(updatedMessages, mergedConfig);
+        // config.systemPrompt is honored centrally by sendAIMessage.
+        const response = await sendAIMessage(updatedMessages, config);
         setMessages((prev) => [...prev, response.message]);
         onResponse?.(response);
       } catch (err) {
